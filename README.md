@@ -15,6 +15,8 @@ Harmonizing deterministic financial calculations with Google Gemini-powered cult
 
 ---
 
+## [[Live Demo]](https://festa-flow.vercel.app)
+
 ## 1. About FestaFlow
 
 Planning Indian celebrations—from royal weddings and sangeet cocktails to griha pravesh ceremonies, milestone birthdays, and community festivals—is often derailed by hidden costs, arbitrary budgets, and fragmented vendor coordination.
