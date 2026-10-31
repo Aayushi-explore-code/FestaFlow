@@ -6,15 +6,10 @@
 **An intelligent Indian celebration planning and budget intelligence platform.**  
 Harmonizing deterministic financial calculations with Google Gemini-powered cultural advisory.
 
-[![Next.js](https://img.shields.io/badge/Next.js-16.4.3-black?style=flat-square&logo=next.js)](https://nextjs.org/)
-[![React](https://img.shields.io/badge/React-19.3.1-61dafb?style=flat-square&logo=react)](https://react.dev/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-7.0.2-blue?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
-[![Google Gemini](https://img.shields.io/badge/Google_Gemini-2.5_Flash-orange?style=flat-square&logo=google)](https://aistudio.google.com/)
-[![PromptWars](https://img.shields.io/badge/PromptWars-Challenge_5-teal?style=flat-square)](#10-project-information)
 
 <br/>
 
-![FestaFlow Hero](docs/screenshots/hero.png)
+![FestaFlow Hero](public/images/hero_celebration.jpg)
 
 </div>
 
@@ -36,7 +31,7 @@ FestaFlow replaces spreadsheet guesswork with an integrated planning system. It 
 
 | AI Cultural Advisor | Timeline & Vendor Handbook |
 | :---: | :---: |
-| ![AI Cultural Advisor](docs/screenshots/cultural-advisor.png) | ![Timeline & Vendor Handbook](docs/screenshots/Timeline and vendor.png) |
+| ![AI Cultural Advisor](docs/screenshots/cultural-advisor.png) | ![Timeline & Vendor Handbook](docs/screenshots/Timeline%20and%20vendor.png) |
 
 ---
 
