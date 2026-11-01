@@ -41,6 +41,8 @@ interface PlanDashboardProps {
   simulatorOptions?: SimulatorOptions;
   onOpenForm: () => void;
   onSavePlan: () => void;
+  onBudgetChange?: (newBudget: number) => void;
+  onGuestCountChange?: (newGuestCount: number) => void;
   onUpdateMilestones?: (milestones: TimelineMilestone[]) => void;
   onUpdateVendors?: (vendors: VendorChecklistItem[]) => void;
   onUpdateSimulatorOptions?: (options: SimulatorOptions) => void;
@@ -54,6 +56,8 @@ export const PlanDashboard: React.FC<PlanDashboardProps> = ({
   simulatorOptions,
   onOpenForm,
   onSavePlan,
+  onBudgetChange,
+  onGuestCountChange,
   onUpdateMilestones,
   onUpdateVendors,
   onUpdateSimulatorOptions,
@@ -359,6 +363,8 @@ export const PlanDashboard: React.FC<PlanDashboardProps> = ({
               currentCurrency={currentCurrency}
               eventType={eventData.eventType}
               initialOptions={simulatorOptions}
+              onBudgetChange={onBudgetChange}
+              onGuestCountChange={onGuestCountChange}
               onUpdateResults={handleSimulatorUpdate}
             />
           )}

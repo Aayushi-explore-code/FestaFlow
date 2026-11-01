@@ -175,6 +175,18 @@ export default function Home() {
     showToast(`Currency changed to ${newCurrency}.`);
   };
 
+  const handleBudgetChange = useCallback((newBudget: number) => {
+    if (typeof newBudget !== 'number' || !Number.isFinite(newBudget)) return;
+    setEventData((prev) => (prev.targetBudget === newBudget ? prev : { ...prev, targetBudget: newBudget }));
+    setSimulatorOptions((prev) => (prev ? { ...prev, targetBudget: newBudget } : prev));
+  }, []);
+
+  const handleGuestCountChange = useCallback((newCount: number) => {
+    if (typeof newCount !== 'number' || !Number.isFinite(newCount)) return;
+    setEventData((prev) => (prev.guestCount === newCount ? prev : { ...prev, guestCount: newCount }));
+    setSimulatorOptions((prev) => (prev ? { ...prev, guestCount: newCount } : prev));
+  }, []);
+
   const handleUpdateSimulatorOptions = useCallback((options: SimulatorOptions) => {
     setSimulatorOptions((prev) => {
       if (
@@ -193,18 +205,6 @@ export default function Home() {
       }
       return options;
     });
-
-    // If simulator sliders adjusted target budget or guest count, keep eventData synchronized
-    setEventData((prev) => {
-      if (prev.targetBudget === options.targetBudget && prev.guestCount === options.guestCount) {
-        return prev;
-      }
-      return {
-        ...prev,
-        targetBudget: options.targetBudget,
-        guestCount: options.guestCount,
-      };
-    });
   }, []);
 
   const handleFormSubmit = (updatedData: EventFormData) => {
@@ -213,6 +213,18 @@ export default function Home() {
     if (typeChanged) {
       setMilestones(getTimelineForEventType(updatedData.eventType));
       setVendors(getVendorChecklistForEventType(updatedData.eventType));
+      setSimulatorOptions(undefined);
+    } else {
+      setSimulatorOptions((prev) =>
+        prev
+          ? {
+              ...prev,
+              targetBudget: updatedData.targetBudget,
+              guestCount: updatedData.guestCount,
+              eventType: updatedData.eventType,
+            }
+          : undefined
+      );
     }
     showToast('Celebration parameters updated. Financial ledger recalculated.');
 
@@ -463,6 +475,8 @@ export default function Home() {
           simulatorOptions={simulatorOptions}
           onOpenForm={() => scrollToSection('setup-form-section')}
           onSavePlan={handleSavePlan}
+          onBudgetChange={handleBudgetChange}
+          onGuestCountChange={handleGuestCountChange}
           onUpdateMilestones={setMilestones}
           onUpdateVendors={setVendors}
           onUpdateSimulatorOptions={handleUpdateSimulatorOptions}

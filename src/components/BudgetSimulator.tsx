@@ -22,6 +22,8 @@ interface BudgetSimulatorProps {
   currentCurrency: CurrencyCode;
   eventType?: string;
   initialOptions?: SimulatorOptions;
+  onBudgetChange?: (newBudget: number) => void;
+  onGuestCountChange?: (newGuestCount: number) => void;
   onUpdateResults?: (results: SimulatorResults, options: SimulatorOptions) => void;
 }
 
@@ -31,6 +33,8 @@ export const BudgetSimulator: React.FC<BudgetSimulatorProps> = ({
   currentCurrency,
   eventType,
   initialOptions,
+  onBudgetChange,
+  onGuestCountChange,
   onUpdateResults,
 }) => {
   const isNonWedding =
@@ -40,9 +44,15 @@ export const BudgetSimulator: React.FC<BudgetSimulatorProps> = ({
     (eventType || '').toLowerCase().includes('community') ||
     (eventType || '').toLowerCase().includes('mela');
 
-  // State
-  const [guestCount, setGuestCount] = useState<number>(initialOptions?.guestCount ?? currentGuestCount ?? 100);
-  const [targetBudget, setTargetBudget] = useState<number>(initialOptions?.targetBudget ?? currentBudget ?? 500000);
+  // Single Source of Truth: Budget and Guest Count are controlled props from page.tsx
+  const guestCount = typeof currentGuestCount === 'number' && Number.isFinite(currentGuestCount)
+    ? currentGuestCount
+    : (initialOptions?.guestCount ?? 100);
+  const targetBudget = typeof currentBudget === 'number' && Number.isFinite(currentBudget)
+    ? currentBudget
+    : (initialOptions?.targetBudget ?? 500000);
+
+  // Local Customization Levers
   const [cateringTier, setCateringTier] = useState<'budget' | 'standard' | 'premium'>(initialOptions?.cateringTier ?? 'standard');
   const [decorTier, setDecorTier] = useState<'minimal' | 'signature' | 'luxury'>(initialOptions?.decorTier ?? 'signature');
   const [entertainmentTier, setEntertainmentTier] = useState<'diy' | 'live_dj' | 'full_band'>(initialOptions?.entertainmentTier ?? 'live_dj');
@@ -51,19 +61,13 @@ export const BudgetSimulator: React.FC<BudgetSimulatorProps> = ({
   const [contingencyPercent, setContingencyPercent] = useState<number>(initialOptions?.contingencyPercent ?? 10);
   const [showAdvancedLevers, setShowAdvancedLevers] = useState<boolean>(false);
 
-  // Sync props when event parameters update externally
+  // Sync non-wedding defaults when event occasion changes
   useEffect(() => {
-    if (currentBudget !== undefined) {
-      setTargetBudget((prev) => (prev !== currentBudget ? currentBudget : prev));
-    }
-    if (currentGuestCount !== undefined) {
-      setGuestCount((prev) => (prev !== currentGuestCount ? currentGuestCount : prev));
-    }
     if (isNonWedding) {
       setIncludeRituals((prev) => (prev ? false : prev));
       setIncludeMehendiAttire((prev) => (prev ? false : prev));
     }
-  }, [currentBudget, currentGuestCount, eventType, isNonWedding]);
+  }, [isNonWedding]);
 
   // Sync initialOptions when hydrated from localStorage or imported
   useEffect(() => {
@@ -85,14 +89,8 @@ export const BudgetSimulator: React.FC<BudgetSimulatorProps> = ({
         const targetVal = isNonWedding ? false : initialOptions.includeMehendiAttire;
         setIncludeMehendiAttire((prev) => (prev !== targetVal ? targetVal : prev));
       }
-      if (typeof initialOptions.contingencyPercent === 'number') {
+      if (typeof initialOptions.contingencyPercent === 'number' && Number.isFinite(initialOptions.contingencyPercent)) {
         setContingencyPercent((prev) => (prev !== initialOptions.contingencyPercent ? initialOptions.contingencyPercent : prev));
-      }
-      if (typeof initialOptions.guestCount === 'number') {
-        setGuestCount((prev) => (prev !== initialOptions.guestCount ? initialOptions.guestCount : prev));
-      }
-      if (typeof initialOptions.targetBudget === 'number') {
-        setTargetBudget((prev) => (prev !== initialOptions.targetBudget ? initialOptions.targetBudget : prev));
       }
     }
   }, [initialOptions, isNonWedding]);
@@ -149,8 +147,12 @@ export const BudgetSimulator: React.FC<BudgetSimulatorProps> = ({
   ]);
 
   const handleResetToBaseline = () => {
-    setGuestCount(currentGuestCount || 100);
-    setTargetBudget(currentBudget || 500000);
+    if (onGuestCountChange && typeof currentGuestCount === 'number') {
+      onGuestCountChange(currentGuestCount || 100);
+    }
+    if (onBudgetChange && typeof currentBudget === 'number') {
+      onBudgetChange(currentBudget || 500000);
+    }
     setCateringTier('standard');
     setDecorTier('signature');
     setEntertainmentTier('live_dj');
@@ -255,7 +257,12 @@ export const BudgetSimulator: React.FC<BudgetSimulatorProps> = ({
                 max="500"
                 step="5"
                 value={guestCount}
-                onChange={(e) => setGuestCount(parseInt(e.target.value, 10))}
+                onChange={(e) => {
+                  const val = parseInt(e.target.value, 10);
+                  if (onGuestCountChange && Number.isFinite(val)) {
+                    onGuestCountChange(val);
+                  }
+                }}
               />
               <div
                 style={{
@@ -288,7 +295,12 @@ export const BudgetSimulator: React.FC<BudgetSimulatorProps> = ({
                 max="4000000"
                 step="50000"
                 value={targetBudget}
-                onChange={(e) => setTargetBudget(parseInt(e.target.value, 10))}
+                onChange={(e) => {
+                  const val = parseInt(e.target.value, 10);
+                  if (onBudgetChange && Number.isFinite(val)) {
+                    onBudgetChange(val);
+                  }
+                }}
               />
               <div
                 style={{
